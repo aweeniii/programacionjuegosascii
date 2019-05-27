@@ -1,0 +1,126 @@
+#include<stdio.h>
+/*la función de impresión de caracteres de esta biblioteca nos pide emplear el código ASCII, de modo que accedemos a caracteres que no hay en iostream*/
+#include<windows.h>
+/*entre sus funciones se encuentra la posibilidad de posicionar objetos y caracteres en los lugares que deseemos, usando coordenadas cartesianas (X,Y)*/
+#include<conio.h>
+/*esta biblioteca tiene facilidad para detectar cuando una tecla fue presionada, de modo que va a ser útil para dirigir el puntero con las teclas*/
+
+#define ARRIBA 72
+#define ABAJO 80
+#define IZQUIERDA 75
+#define DERECHA 77
+/*estas definiciones se van a usar para ocupar las flechas como direccionales. Los numeros refieren a la numeración que cada tecla del teclado tiene*/
+
+
+void gotoxy (int x, int y) {
+	/*estos parámetros sirven para llamar a las coordenadas en xyPos.X y xyPos.Y*/
+	
+	
+	HANDLE vJue;
+	/*es el identificador para la ventana donde se va a ejecutar el programa, esto permite que SetConsoleCursorPosition funcione*/
+	
+	vJue=GetStdHandle (STD_OUTPUT_HANDLE);
+	/*nos permitirá recuperar el identificador de la consola, su posición estándar de salida nos da control de la salida de la consola*/
+	
+	COORD xyPos;
+	/*estructura que viene definida en la biblioteca <windows.h>, utilizados como parámetros en SetConsoleCursorPosition, funcionan como
+	coordenadas (X, Y) del cursor y son necesarios para poder moverlos*/
+	xyPos.X = x;
+	xyPos.Y = y;
+	/*se llama a los atributos de xyPos con el punto y se le asinga un valor en cada coordenada que posee (X,Y). Deben estar en mayúsuculas*/
+	
+	
+	SetConsoleCursorPosition(vJue, xyPos);
+	/*función de <windows.h> que nos permite dar una posición al cursor e imprimir lo que se desee en esas coordenadas
+	cuando se colocó VJue y xyPos lo que se hizo fue dar el control de la consola, pasarle coordenadas y entonces imprime sobre la consola
+	el cursor en las coordenadas que se le atribuyeron.*/
+
+}
+	/*la función es de tipo void porque no nos regresa ningún tipo de datos, simplemente realiza una acción. Se utiliza la biblioteca windows.h*/
+
+
+void OcultarCursor(){
+	/*esta función va a hacer que desaparezca el cursor parpadeante de al lado y se vea más wonito todo*/
+	
+	HANDLE vJue;
+	/*es el identificador para la ventana donde se va a ejecutar el programa, esto permite que SetConsoleCursorInfo funcione*/
+	vJue=GetStdHandle (STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO cci;
+	/*esta estructura permite controlar el tamaño y la visibilidad del cursor*/
+	cci.dwSize = 100;
+	cci.bVisible = false;
+	SetConsoleCursorInfo(vJue, &cci);
+}
+
+
+class PERSONAJE{
+	int x, y;
+	int _x, _y;
+	/*son sus coordenadas
+	estos atributos son privados y no se pueden emplear fuera de la clase*/
+	
+public: 
+	/*los atributos colocados acá se pueden ocupar fuera de la clase*/
+	
+	//*esto es un constructor, sirve para poder llamar a las características privadas que tiene la clase fuera de ella*//
+	PERSONAJE (int _x, int _y): x(_x), y(_y) {}
+	
+	void pintar();
+	//*este es para darle forma al personaje*//
+	void borrar();
+	//*esto es para que no se quede el rastro del personaje*//
+	void mover();
+	//*se va a ocupar para direccionar al personaje*//
+	
+};
+
+void PERSONAJE::pintar () {
+	//*se escribe así porque es una función que se ocupa desde la clase PERSONAJE*//
+	
+	gotoxy (x, y); printf ("%c %c %c", 153, 202, 153);
+	gotoxy (x, y+1); printf ("  %c", 94);
+	
+}
+
+void PERSONAJE::borrar (){
+	gotoxy (x,y); printf ("                ");
+	gotoxy (x, y+1); printf ("             ");
+}
+void PERSONAJE::mover (){
+	if(kbhit()){
+		/*la función kbhit es la encargada de detectar que las teclas se presionan*/
+		char tecla = getch();
+		/*la funcion getch se encarga de guardar las teclas que se presionen*/
+		borrar();
+		/*esto es útil para que los caracteres no dejen rastro, se vuelve a llamar a las coordenadas para evitar su desaparición y se
+		añade un espacio en blanco que se va a encargar de borrar lo que antes fue impreso y así continuamente*/
+		if (tecla == IZQUIERDA) x--;
+		if (tecla == DERECHA) x++;
+		if (tecla == ARRIBA) y--;
+		if (tecla == ABAJO) y++;
+		pintar();}
+		/*se posiciona al puntero en este sitio porque es necesaria su aparición sólo cuando una tecla fue presionada*/
+}
+int main (){
+	
+	OcultarCursor();
+	
+	PERSONAJE N(15, 33);
+	N.pintar();
+	
+	
+	/*bucle para mover el puntero:*/
+	bool game_over = false;
+	/*permite la condición mediante un método sencillo de verdadero o falso, por eso se le asigna un valor booleano*/
+	while (!game_over) {
+		/*la condición es que se ejecute siempre que gameover sea falso*/
+		
+		N.mover();
+		
+			Sleep (30);
+			/*esto ayuda a que el procesador no se sature al ejecutar el bucle, porque la iteración es muy intensa al repetir estas acciones*/
+		}
+		
+
+	return (0);
+}

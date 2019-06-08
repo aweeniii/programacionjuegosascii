@@ -253,18 +253,17 @@ int main (){
 		}
 		//*es el bucle para el choque*//
 		for (itB = B.begin(); itB != B.end(); itB++){
-			for (it=D.begin(); it !=D.end(); it++){
-				if ((*itB)->X() == (*it)->X() && ( (*itB)->Y()+1 == (*it)->Y() || (*itB)->Y() == (*it)-> Y() )){
-					gotoxy ((*it)->X(), (*it)->Y()); printf (" ");
+			for (itD=D.begin(); itD !=D.end(); itD++){
+				if ((*itB)->X() == (*itD)->X() && ( (*itB)->Y()+1 == (*itD)->Y() || (*itB)->Y() == (*itD)-> Y() )){
+					gotoxy ((*itD)->X(), (*itD)->Y()); printf (" ");
 					delete (*itB);
-					it=D.erase(it);
+					itD=D.erase(itD);
 					
 					B.push_back(new BLANCOS (rand()%90+3, 7) );
 					gotoxy ((*itB)->X(), (*itB)->Y()); printf (" ");
 					delete (*itB);
 					itB=B.erase(itB);
 					puntos=puntos+5;
-					
 				}
 			}
 		}
@@ -273,10 +272,10 @@ int main (){
 		if (N.vid() == 0) {
 			game_over=true;
 			gotoxy (53,20); printf ("GAME OVER");
-			Sleep (1000);
+			Sleep (8000);
 		}
 		//*es para que valide el final*//
-		if (puntos==30){
+		if (puntos==500){
 		//*se recomienda que se reduzca la condicion para hacer pruebas*//
 			game_over=true;
 			gotoxy (53,20); printf ("WIN");
@@ -293,6 +292,5 @@ int main (){
 		Sleep (80);
 		/*esto ayuda a que el procesador no se sature al ejecutar el bucle, porque la iteraciï¿½n es muy intensa al repetir estas acciones*/
 		}
-
 	return (0);
 }
